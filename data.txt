@@ -1,0 +1,50 @@
+HOA DON CUA KHACH HANG Son Tung MTP
+Ngay vao: 2
+Ngay ra: 23
+Loai phong: A101
+Ma hoa don: 06092004
+Ten khach hang: Son Tung MTP
+So CMT: 04220194446
+Gioi tinh: Nu
+Tien phong phai tra: 8800000 VNĐ
+ -------------------------
+HOA DON CUA KHACH HANG Nguyen Viet Dung
+Ngay vao: 7
+Ngay ra: 23
+Loai phong: B102
+Ma hoa don: 06092007
+Ten khach hang: Nguyen Viet Dung
+So CMT: 042201949053
+Gioi tinh: Nam
+Tien phong phai tra: 5100000 VNĐ
+ -------------------------
+HOA DON CUA KHACH HANG Ngo Dang Gia Bao
+Ngay vao: 15
+Ngay ra: 26
+Loai phong: C204
+Ma hoa don: 22012005
+Ten khach hang: Ngo Dang Gia Bao
+So CMT: 042791739217
+Gioi tinh: Nam
+Tien phong phai tra: 2400000 VNĐ
+ -------------------------
+HOA DON CUA KHACH HANG An Thuyen
+Ngay vao: 24
+Ngay ra: 30
+Loai phong: B102
+Ma hoa don: 23122005
+Ten khach hang: An Thuyen
+So CMT: 042201649056
+Gioi tinh: Nam
+Tien phong phai tra: 2100000 VNĐ
+ -------------------------
+HOA DON CUA KHACH HANG Nguyen Nhat Minh
+Ngay vao: 11
+Ngay ra: 13
+Loai phong: B202
+Ma hoa don: 23052004
+Ten khach hang: Nguyen Nhat Minh
+So CMT: 019823789451
+Gioi tinh: Nam
+Tien phong phai tra: 900000 VNĐ
+ -------------------------
