@@ -1,11 +1,11 @@
 #ifndef HOTEL_TYPES_H
 #define HOTEL_TYPES_H
 
-#define FILE_LAYOUT      "data/your_hotel.txt"
-#define FILE_INPUT       "data/input.txt"
-#define FILE_DATA_OUT    "data/data.txt"
-#define FILE_SORT_DATE   "data/datein.txt"
-#define FILE_SORT_PRICE  "data/price.txt"
+#define FILE_LAYOUT      "files/your_hotel.txt"
+#define FILE_INPUT       "files/input.txt"
+#define FILE_DATA_OUT    "files/customer_bill.txt"
+#define FILE_SORT_DATE   "files/sort_by_date_in.txt"
+#define FILE_SORT_PRICE  "files/sort_by_price.txt"
 
 #define MAX_FLOORS 50
 #define MAX_ROOMS_PER_FLOOR 100

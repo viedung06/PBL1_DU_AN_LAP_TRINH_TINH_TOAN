@@ -27,5 +27,6 @@ void sort_by_price(List *L);
 void input_data(List *L, date *d, int choice);
 void delete_more_customer(List *L);
 void popMinh(List *L);
+void change_customer_info(List *L, int choice);
 
 #endif

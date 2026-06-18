@@ -7,7 +7,7 @@ Nguyen Viet Dung
 Nam
 
 24
-31
+30
 B102
 23122005
 An Thuyen
@@ -15,7 +15,7 @@ An Thuyen
 Nam
 
 01
-31
+30
 A101
 06092004
 Son Tung MTP
@@ -39,7 +39,7 @@ Nguyen Nhat Minh
 Nam
 
 01
-31
+30
 A301
 23012006
 Miu Le
@@ -47,9 +47,9 @@ Miu Le
 Nu
 
 01
-31
+30
 C305
 21032006
-Hoang The Tai
+Chrollo Lucifer
 042306396850
 Nu

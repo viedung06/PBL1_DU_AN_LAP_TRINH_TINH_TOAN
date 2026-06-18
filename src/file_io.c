@@ -6,7 +6,10 @@
 
 int read_hotel_layout(const char *filename, int *floor_count, int room_counts[], char rooms[][MAX_ROOMS_PER_FLOOR][MAX_ROOM_NAME_LEN]) {
     FILE *f = fopen(filename, "r");
-    if (f == NULL) return 0;
+    if (f == NULL){
+        printf(INDENT RED "Khong mo duoc file!\n" RESET);
+        return 0;
+    }
     if (fscanf(f, "%d", floor_count) != 1) { fclose(f); return 0; }
     if (*floor_count <= 0 || *floor_count > MAX_FLOORS) { fclose(f); return 0; }
     for (int i = 0; i < *floor_count; i++) {
@@ -20,9 +23,9 @@ int read_hotel_layout(const char *filename, int *floor_count, int room_counts[],
     return 1;
 }
 
-void read_file(List *L, int choice) { 
-    FILE *f = fopen(FILE_INPUT, "r");
-    if (f == NULL) { printf(INDENT "Khong mo duoc file!\n"); return; }
+void read_file(List *L, int choice, const char *filename) { 
+    FILE *f = fopen(filename, "r");
+    if (f == NULL) { printf(INDENT RED"Khong mo duoc file!\n"RESET); return; }
     date d;
     while (fscanf(f, "%d", &d.date_in) == 1) {
         if (fscanf(f, "%d", &d.date_out) != 1) break;
@@ -58,14 +61,18 @@ void read_file(List *L, int choice) {
         add_tail(L, d);
     }
     fclose(f);
-    printf(INDENT GREEN "Da doc file %s thanh cong!\n" RESET, FILE_INPUT);
+    printf(INDENT GREEN "Da doc file %s thanh cong!\n" RESET, filename);
 }
 
-void print_file(List *L) { 
+void print_file(List *L, const char *filename) { 
     if (check_empty(L)) {
         printf(INDENT YELLOW"DANH SACH RONG!\n" RESET); return;
     } else {
-        FILE *f = fopen(FILE_DATA_OUT, "w");
+        FILE *f = fopen(filename, "w");
+        if(f == NULL) { 
+            printf(INDENT RED "Khong mo duoc file!\n" RESET);
+            return;
+            }
         Node *p = L->head;
         char tien_phong_str[20], tien_phong_temp[20];
         while (p != NULL) {
@@ -82,44 +89,44 @@ void print_file(List *L) {
     }
 }
 
-void print_sort_by_date(List *L) { 
-    FILE *f = fopen(FILE_SORT_DATE, "w");
+void print_sort_by_date(List *L, const char *filename) { 
+    FILE *f = fopen(filename, "w");
     if (f == NULL) { printf(INDENT RED "Khong mo duoc file!\n" RESET); return; }
     char tien_phong_str[20], tien_phong_str_tmp[20];
-    fprintf(f, "======================================================================\n");
+    fprintf(f, "==============================================================================================================\n");
     fprintf(f, "                  DANH SACH SAP XEP THEO NGAY VAO\n");
-    fprintf(f, "======================================================================\n");
-    fprintf(f, "%-5s %-25s %-10s %-15s %-15s\n", "STT", "TEN KHACH", "PHONG", "NGAY VAO", "TIEN PHONG");
-    fprintf(f, "----------------------------------------------------------------------\n");
+    fprintf(f, "==============================================================================================================\n");
+    fprintf(f, "%-5s %-25s %-10s %-15s %-15s %-15s %-15s\n", "STT", "TEN KHACH", "PHONG", "NGAY VAO", "NGAY RA", "SO NGAY O", "TIEN PHONG");
+    fprintf(f, "--------------------------------------------------------------------------------------------------------------\n");
     Node *p = L->head; int stt = 1;
     while (p != NULL) {
         sprintf(tien_phong_str, "%lld", p->data.tien_phong);
         add_dot(tien_phong_str,strlen(tien_phong_str),tien_phong_str_tmp);
-        fprintf(f, "%-5d %-25s %-10s %-15d %s\n", stt, p->data.customer_info.name, p->data.room_type, p->data.date_in, tien_phong_str_tmp);
+        fprintf(f, "%-5d %-25s %-10s %-15d %-15d %-15d %s\n", stt, p->data.customer_info.name, p->data.room_type, p->data.date_in, p->data.date_out, get_days(p->data.date_in, p->data.date_out), tien_phong_str_tmp);
         p = p->next; stt++;
     }
-    fprintf(f, "======================================================================\n");
+    fprintf(f, "==============================================================================================================\n");
     fclose(f);
-    printf(INDENT GREEN "Da xuat file %s\n" RESET, FILE_SORT_DATE);
+    printf(INDENT GREEN "Da xuat file %s\n" RESET, filename);
 }
 
-void print_sort_by_price(List *L) { 
-    FILE *f = fopen(FILE_SORT_PRICE, "w");
+void print_sort_by_price(List *L, const char *filename) { 
+    FILE *f = fopen(filename, "w");
     if (f == NULL) { printf(INDENT RED "Khong mo duoc file!\n" RESET); return; }
     char tien_phong_str[20], tien_phong_str_tmp[20];
-    fprintf(f, "======================================================================\n");
+    fprintf(f, "==============================================================================================================\n");
     fprintf(f, "           DANH SACH SAP XEP THEO TIEN PHONG\n");
-    fprintf(f, "======================================================================\n");
-    fprintf(f, "%-5s %-25s %-10s %-15s %-15s\n", "STT", "TEN KHACH", "PHONG", "NGAY VAO", "TIEN PHONG");
-    fprintf(f, "----------------------------------------------------------------------\n");
+    fprintf(f, "==============================================================================================================\n");
+    fprintf(f, "%-5s %-25s %-10s %-15s %-15s %-15s %-15s\n", "STT", "TEN KHACH", "PHONG", "NGAY VAO", "NGAY RA", "SO NGAY O", "TIEN PHONG");
+    fprintf(f, "--------------------------------------------------------------------------------------------------------------\n");
     Node *p = L->head; int stt = 1;
     while (p != NULL) {
         sprintf(tien_phong_str, "%lld", p->data.tien_phong);
         add_dot(tien_phong_str,strlen(tien_phong_str),tien_phong_str_tmp);
-        fprintf(f, "%-5d %-25s %-10s %-15d %s\n", stt, p->data.customer_info.name, p->data.room_type, p->data.date_in, tien_phong_str_tmp);
+        fprintf(f, "%-5d %-25s %-10s %-15d %-15d %-15d %s\n", stt, p->data.customer_info.name, p->data.room_type, p->data.date_in, p->data.date_out, get_days(p->data.date_in, p->data.date_out), tien_phong_str_tmp);
         p = p->next; stt++;
     }
-    fprintf(f, "======================================================================\n");
+    fprintf(f, "==============================================================================================================\n");
     fclose(f);
-    printf(INDENT GREEN "Da xuat file %s\n" RESET, FILE_SORT_PRICE);
+    printf(INDENT GREEN "Da xuat file %s\n" RESET, filename);
 }

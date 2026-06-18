@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <windows.h>
 #include "include/hotel_types.h"
 #include "include/linked_list.h"
@@ -19,7 +20,7 @@ int main() {
     init(&L); // LUÔN KHỞI TẠO NGAY ĐẦU TIÊN
     date data;
     int chinh, phu, choice;
-    
+    char filename[100];
     drawCustomDiagramMenu();
     choice = get_safe_int(" ", 1, 2);
     if(choice == 1) {
@@ -28,26 +29,27 @@ int main() {
             return 1;
         }
     }
-    read_file(&L, choice); 
+    read_file(&L, choice, "files/input.txt");
 
     do {
         if (choice == 1) {
             export_custom_table(&L);
             printf(INDENT BOLD_WHITE "An phim bat ky de tiep tuc..." RESET);
             getchar();
-        } else {
+        }
+        if(choice == 2){
             export_table(&L);
             printf(INDENT BOLD_WHITE "An phim bat ky de tiep tuc..." RESET);
             getchar();
         }
         menu_chinh();
-        chinh = get_safe_int(" ", 0, 5);
+        chinh = get_safe_int(" ", 0, 6);
 
         switch(chinh) {
             case 1:
                 do {
                     menu_them_xoa();
-                    phu = get_safe_int(" ", 0, 6);
+                    phu = get_safe_int(" ", 0, 5);
                     switch(phu) {
                         case 1:
                             input_data(&L, &data, choice);
@@ -83,8 +85,9 @@ int main() {
                             printf(INDENT BOLD_WHITE "An phim bat ky de tiep tuc..." RESET);
                             getchar();
                             break;
-                        case 0: break;
-                        default: printf(INDENT "Lua chon khong hop le, vui long chon lai!\n");
+                        case 0: 
+                            break;
+                        default: printf(INDENT RED "Lua chon khong hop le, vui long chon lai!\n" RESET);
                     }
                 } while(phu != 0);
                 break;
@@ -113,7 +116,7 @@ int main() {
                             break;
                         }
                         case 0: break;
-                        default: printf(INDENT "Lua chon khong hop le, vui long chon lai!\n");
+                        default: printf(INDENT RED "Lua chon khong hop le, vui long chon lai!\n" RESET);
                     }
                 } while(phu != 0);
                 break;
@@ -124,21 +127,25 @@ int main() {
                     phu = get_safe_int(" ", 0, 2);
                     switch(phu) {
                         case 1:
+                            printf(INDENT BOLD_WHITE "Nhap ten file de xuat thong tin:" RESET);
+                            read_line(filename, sizeof(filename));
                             sort_by_date_in(&L);
-                            print_sort_by_date(&L);
-                            printf(INDENT "Da sap xep theo ngay vao.\n");
+                            print_sort_by_date(&L, filename);
+                            printf(INDENT GREEN"Da sap xep theo ngay vao.\n" RESET);
                             printf(BOLD_WHITE INDENT "An phim bat ky de tiep tuc..." RESET);
                             getchar();
                             break;
                         case 2:
+                            printf(INDENT BOLD_WHITE "Nhap ten file de xuat thong tin:" RESET);
+                            read_line(filename, sizeof(filename));
                             sort_by_price(&L);
-                            print_sort_by_price(&L);
-                            printf(INDENT "Da sap xep theo tien phong.\n");
+                            print_sort_by_price(&L, filename);
+                            printf(INDENT GREEN"Da sap xep theo tien phong.\n" RESET);
                             printf(BOLD_WHITE INDENT "An phim bat ky de tiep tuc..." RESET);
                             getchar();
                             break;
                         case 0: break;
-                        default: printf(INDENT "Lua chon khong hop le, vui long chon lai!\n");
+                        default: printf(INDENT RED "Lua chon khong hop le, vui long chon lai!\n" RESET);
                     }
                 } while(phu != 0);
                 break;
@@ -149,8 +156,10 @@ int main() {
                     phu = get_safe_int(" ", 0, 3);
                     switch(phu) {
                         case 1:
-                            print_file(&L);
-                            printf(INDENT BOLD_WHITE"Da in tat ca hoa don ra file %s\n"RESET, FILE_DATA_OUT);
+                            printf(INDENT BOLD_WHITE "Nhap ten file de xuat thong tin:" RESET);
+                            read_line(filename, sizeof(filename));
+                            print_file(&L, filename);
+                            printf(INDENT BOLD_WHITE "Da in tat ca hoa don ra file:  " GREEN "%s\n" RESET, filename);
                             printf(BOLD_WHITE INDENT "An phim bat ky de tiep tuc..." RESET);
                             getchar();
                             break;
@@ -184,19 +193,26 @@ int main() {
                             getchar();
                             break;
                         case 2:
-                            read_file(&L, choice);
+                            printf(INDENT BOLD_WHITE "Nhap ten file de doc thong tin:" RESET);
+                            read_line(filename, sizeof(filename));
+                            read_file(&L, choice, filename);
                             printf(BOLD_WHITE INDENT"An phim bat ky de tiep tuc..." RESET);
                             getchar();
                             break;
                         case 0: break;
-                        default: printf(INDENT"Lua chon khong hop le, vui long chon lai!\n");
+                        default: printf(INDENT RED "Lua chon khong hop le, vui long chon lai!\n" RESET);
                     }
                 } while(phu != 0);
+                break;
+            case 6:
+                change_customer_info(&L, choice);
+                printf(BOLD_WHITE INDENT"An phim bat ky de tiep tuc..." RESET);
+                getchar();
                 break;
 
             case 0:
                 clear_list(&L); // Giải phóng bộ nhớ trước khi thoát
-                printf(INDENT YELLOW"THOÁT CHUƠNG TRÌNH, CẢM ƠN CÔ ĐÃ LẮNG NGHE\n" RESET);
+                printf(INDENT YELLOW"THOÁT CHUƠNG TRÌNH, CẢM ƠN THẦY CÔ ĐÃ LẮNG NGHE\n" RESET);
                 break;
 
             default:
@@ -206,3 +222,4 @@ int main() {
     
     return 0;
 }
+// in thêm ngày ra, so ngay o

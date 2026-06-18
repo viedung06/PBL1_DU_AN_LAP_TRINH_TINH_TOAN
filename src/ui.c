@@ -34,6 +34,7 @@ void menu_chinh() {
     printf("                                  ║  " BOLD_WHITE "3. Sap xep hoa don" RESET BLUE "                            ║\n");
     printf("                                  ║  " BOLD_WHITE "4. Thong ke va in du lieu" RESET BLUE "                     ║\n");
     printf("                                  ║  " BOLD_WHITE "5. Chuc nang de rieng" RESET BLUE "                         ║\n");
+    printf("                                  ║  " BOLD_WHITE "6. Sua thong tin hoa don" RESET BLUE "                      ║\n");
     printf("                                  ║  " BOLD_WHITE "0. Thoat" RESET BLUE "                                      ║\n");
 
     printf("                                  ╚════════════════════════════════════════════════╝\n");
@@ -112,27 +113,30 @@ void export_list_table(List *L) {
     if (check_empty(L)) {
         printf(INDENT YELLOW"DANH SACH RONG!\n" RESET); return;
     }
-    printf(BLUE"\n                                  ╔════════════════════════════════════════════════════════════════════════════════╗\n");
-    printf(INDENT"║ %*s" GREEN BOLD "DANH SÁCH HÓA ĐƠN CỦA KHÁCH HÀNG" RESET BLUE "%*s   ║\n", 22, "", 22, "");
-    printf(INDENT"╠══════╦═══════════════════════════╦════════════╦═════════════════╦══════════════╣\n");
-    printf(INDENT"║ " BOLD_WHITE "%-4s" BLUE " ║ " BOLD_WHITE "%-25s" BLUE " ║ " BOLD_WHITE "%-10s" BLUE " ║ " BOLD_WHITE "%-15s" BLUE " ║ " BOLD_WHITE "%-12s" BLUE " ║\n" RESET, "STT", "Ho va Ten", "Phong o", "Ngay vao va ra", "So CCCD");
-    printf(BLUE INDENT"╠══════╬═══════════════════════════╬════════════╬═════════════════╬══════════════╣\n" RESET);
+    printf(BLUE INDENT"╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗\n");
+    printf(INDENT"║%*s" GREEN BOLD "DANH SÁCH HÓA ĐƠN CỦA KHÁCH HÀNG      " RESET BLUE "%*s║\n", 37, "", 37, "");
+    printf(                INDENT"╠══════╦═══════════════════════════╦══════════════╦════════════╦═════════════════╦══════════════╦════════════════╣\n");
+    printf(INDENT"║ " BOLD_WHITE "%-4s" BLUE " ║ " BOLD_WHITE "%-25s" BLUE " ║ " BOLD_WHITE "%-12s" BLUE " ║ " BOLD_WHITE "%-10s" BLUE " ║ " BOLD_WHITE "%-15s" BLUE " ║ " BOLD_WHITE "%-12s" BLUE " ║ " BOLD_WHITE "%-14s" BLUE " ║\n" RESET, "STT", "Ho va Ten", "Ma HD", "Phong o", "Ngay vao va ra", "So CCCD", "Tien Phong");
+    printf(BLUE INDENT"╠══════╬═══════════════════════════╬══════════════╬════════════╬═════════════════╬══════════════╬════════════════╣\n" RESET);
     Node *p = L->head; int stt = 1;
+    char tien_str[20], tien_tmp[20];
     while (p != NULL) {
         char date_range[20];
         sprintf(date_range, "%d -> %d", p->data.date_in, p->data.date_out);
-        printf(BLUE INDENT "║ " RESET BOLD_WHITE"%-4d"RESET BLUE " ║ " RESET BOLD_WHITE"%-25.25s"RESET BLUE " ║ " RESET BOLD_WHITE"%-10s"RESET BLUE " ║ " RESET BOLD_WHITE"%-15s"BLUE " ║ " RESET BOLD_WHITE"%-12s"BLUE " ║\n", stt, p->data.customer_info.name, p->data.room_type, date_range, p->data.customer_info.identity_card);
+        sprintf(tien_str, "%lld", p->data.tien_phong);
+        add_dot(tien_str, strlen(tien_str), tien_tmp);
+        printf(BLUE INDENT "║ " RESET BOLD_WHITE"%-4d"RESET BLUE " ║ " RESET BOLD_WHITE"%-25.25s"RESET BLUE " ║ " RESET BOLD_WHITE"%-12s"RESET BLUE " ║ " RESET BOLD_WHITE"%-10s"RESET BLUE " ║ " RESET BOLD_WHITE"%-15s"BLUE " ║ " RESET BOLD_WHITE"%-12s"BLUE " ║ " RESET BOLD_WHITE"%-14s"BLUE " ║\n", stt, p->data.customer_info.name, p->data.invoice_code, p->data.room_type, date_range, p->data.customer_info.identity_card, tien_tmp);
         p = p->next; stt++;
     }
-    printf(BLUE INDENT "╚══════╩═══════════════════════════╩════════════╩═════════════════╩══════════════╝\n" RESET);
+    printf(BLUE INDENT "╚══════╩═══════════════════════════╩══════════════╩════════════╩═════════════════╩══════════════╩════════════════╝\n" RESET);
 }
 
 void export_custom_table(List *L) { 
-    printf(BLUE "\n╔════════════════════════════════════════════════════════════════════════════════════════════════════╗\n");
-    printf("║%*s" GREEN BOLD "SƠ ĐỒ ĐẶT PHÒNG CHI TIẾT" RESET BLUE "%*s ║\n", 37, "", 38, "");
-    printf("╠══════════╦══════════╦═══════════════╦══════════╦════════════╦════════════╦═════════════════════════╣\n");
-    printf("║ " BOLD_WHITE "%-8s" BLUE " ║ " BOLD_WHITE "%-8s" BLUE " ║ " BOLD_WHITE "%-13s" BLUE " ║ " BOLD_WHITE "%-8s" BLUE " ║ " BOLD_WHITE "%-10s" BLUE " ║ " BOLD_WHITE "%-10s" BLUE " ║ " BOLD_WHITE "%-23s" BLUE " ║\n" RESET, "Tang", "Ma phong", "Gia (VND)", "T.Thai", "Ngay Vao", "Ngay Ra", "Khach hang");
-    printf(BLUE"╠══════════╬══════════╬═══════════════╬══════════╬════════════╬════════════╬═════════════════════════╣\n" RESET);
+    printf(BLUE "\n╔═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗\n");
+    printf("║%*s" GREEN BOLD "SƠ ĐỒ ĐẶT PHÒNG CHI TIẾT" RESET BLUE "%*s║\n", 48, "", 49, "");
+    printf(       "╠══════════╦══════════╦═══════════════╦══════════╦════════════╦════════════╦═════════════════════════╦══════════════════╣\n");
+    printf("║ " BOLD_WHITE "%-8s" BLUE " ║ " BOLD_WHITE "%-8s" BLUE " ║ " BOLD_WHITE "%-13s" BLUE " ║ " BOLD_WHITE "%-8s" BLUE " ║ " BOLD_WHITE "%-10s" BLUE " ║ " BOLD_WHITE "%-10s" BLUE " ║ " BOLD_WHITE "%-23s" BLUE " ║ " BOLD_WHITE "%-16s" BLUE " ║\n" RESET, "Tang", "Ma phong", "Gia (VND)", "T.Thai", "Ngay Vao", "Ngay Ra", "Khach hang", "Tien Phong");
+    printf(BLUE"╠══════════╬══════════╬═══════════════╬══════════╬════════════╬════════════╬═════════════════════════╬══════════════════╣\n" RESET);
 
     for (int i = 0; i < floor_count; i++) {
         for (int j = 0; j < room_counts[i]; j++) {
@@ -141,6 +145,7 @@ void export_custom_table(List *L) {
             char price_str[20];
             sprintf(price_str, "%ld.000", price / 1000);
             int found_at_least_one = 0; Node *p = L->head;
+            char tien_str[20], tien_tmp[20];
 
             while (p != NULL) {
                 if (strcmp(p->data.room_type, rooms[i][j]) == 0) {
@@ -164,7 +169,10 @@ void export_custom_table(List *L) {
                     char name_tmp[24];
                     strncpy(name_tmp, p->data.customer_info.name, 23);
                     name_tmp[23] = '\0';
-                    printf("%-23s" BLUE " ║\n" RESET, name_tmp);
+                    printf("%-23s" BLUE " ║ " RESET, name_tmp);
+                    sprintf(tien_str, "%lld", p->data.tien_phong);
+                    add_dot(tien_str, strlen(tien_str), tien_tmp);
+                    printf("%-16s" BLUE " ║\n" RESET, tien_tmp);
                     found_at_least_one = 1;
                 }
                 p = p->next;
@@ -180,24 +188,26 @@ void export_custom_table(List *L) {
                 printf(CYAN "%-8s" BLUE " ║ " RESET, "Trong");
                 printf("%-10d" BLUE " ║ " RESET, 0);
                 printf("%-10d" BLUE " ║ " RESET, 0);
-                printf("%-23s" BLUE " ║\n" RESET, "-");
+                printf("%-23s" BLUE " ║ " RESET, "-");
+                printf("%-16s" BLUE " ║\n" RESET, "-");
             }
         }
-        if (i < floor_count - 1) printf(BLUE "╠══════════╬══════════╬═══════════════╬══════════╬════════════╬════════════╬═════════════════════════╣\n" RESET);
+        if (i < floor_count - 1) printf(BLUE "╠══════════╬══════════╬═══════════════╬══════════╬════════════╬════════════╬═════════════════════════╬══════════════════╣\n" RESET);
     }
-    printf(BLUE "╚══════════╩══════════╩═══════════════╩══════════╩════════════╩════════════╩═════════════════════════╝\n" RESET);
+    printf(BLUE "╚══════════╩══════════╩═══════════════╩══════════╩════════════╩════════════╩═════════════════════════╩══════════════════╝\n" RESET);
 }
 
 void export_table(List *L) {
-    printf(BLUE "╔════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗\n" RESET);
-    printf(BLUE "║ %*s"GREEN BOLD "DANH SÁCH CHI TIẾT ĐẶT PHÒNG KHÁCH SẠN"RESET BLUE"%*s║\n", 38, "", 39, "");
-    printf(BLUE "╠════════════╦════════════╦════════════╦════════════════╦══════════════╦══════════════╦══════════════════════════════╣\n" RESET);
-    printf(BLUE "║ " BOLD_WHITE "%-10s" BLUE " ║ " BOLD_WHITE "%-10s" BLUE " ║ " BOLD_WHITE "%-10s" BLUE " ║ " BOLD_WHITE "%-14s" BLUE " ║ " BOLD_WHITE "%-12s" BLUE " ║ " BOLD_WHITE "%-12s" BLUE " ║ " BOLD_WHITE "%-28s" BLUE " ║\n" RESET, "Tang/Lau", "Ma Phong", "Loai", "Gia (VND)", "Ngay Vao", "Ngay Ra", "Ten Khach Hang");
+    printf(BLUE "╔═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗\n" RESET);
+    printf(BLUE "║%*s" GREEN BOLD "DANH SÁCH CHI TIẾT ĐẶT PHÒNG KHÁCH SẠN" RESET BLUE "%*s║\n" RESET, 47, "", 48, "");
+    printf(BLUE "╠════════════╦════════════╦════════════╦════════════════╦══════════════╦══════════════╦══════════════════════════════╦════════════════╣\n" RESET);
+    printf(BLUE "║ " BOLD_WHITE "%-10s" BLUE " ║ " BOLD_WHITE "%-10s" BLUE " ║ " BOLD_WHITE "%-10s" BLUE " ║ " BOLD_WHITE "%-14s" BLUE " ║ " BOLD_WHITE "%-12s" BLUE " ║ " BOLD_WHITE "%-12s" BLUE " ║ " BOLD_WHITE "%-28s" BLUE " ║ " BOLD_WHITE "%-14s" BLUE " ║\n" RESET, "Tang/Lau", "Ma Phong", "Loai", "Gia (VND)", "Ngay Vao", "Ngay Ra", "Ten Khach Hang", "Tien Phong");
 
     char loai_phong, gia_tien[15], ma_phong[10];
+    char tien_phong_str[20], tien_phong_tmp[20];
 
     for (int lau = 1; lau <= 3; lau++) {
-        printf(BLUE "╠════════════╬════════════╬════════════╬════════════════╬══════════════╬══════════════╬══════════════════════════════╣\n" RESET);
+        printf(BLUE "╠════════════╬════════════╬════════════╬════════════════╬══════════════╬══════════════╬══════════════════════════════╬════════════════╣\n" RESET);
         for (int phong = 1; phong <= 6; phong++) {
             if (phong == 1) { loai_phong = 'A'; strcpy(gia_tien, "400,000"); }
             else if (phong == 2 || phong == 3) { loai_phong = 'B'; strcpy(gia_tien, "300,000"); }
@@ -228,11 +238,13 @@ void export_table(List *L) {
                     
                     printf(BOLD_WHITE "%-12d" BLUE " ║ " RESET, p->data.date_in); 
                     printf(BOLD_WHITE "%-12d" BLUE " ║ " RESET, p->data.date_out);
-                    
+                    sprintf(tien_phong_str, "%lld", p->data.tien_phong);
+                    add_dot(tien_phong_str, strlen(tien_phong_str), tien_phong_tmp);
                     char ten_tam[31];
                     strncpy(ten_tam, p->data.customer_info.name, 28);
                     ten_tam[28] = '\0';
-                    printf(BOLD_WHITE "%-28s" BLUE " ║\n" RESET, ten_tam);
+                    printf(BOLD_WHITE "%-28s" BLUE " ║ " RESET, ten_tam);
+                    printf(BOLD_WHITE "%-14s" BLUE " ║\n" RESET, tien_phong_tmp);
                     found_customer++;
                 }
                 p = p->next;
@@ -250,9 +262,10 @@ void export_table(List *L) {
                 printf(BOLD_WHITE "%-14s" BLUE " ║ " RESET, gia_tien);
                 printf("%-12d" BLUE " ║ " RESET, 0);
                 printf("%-12d" BLUE " ║ " RESET, 0);
-                printf(CYAN "%-28s" BLUE " ║\n" RESET, "- Trong -");
+                printf(CYAN "%-28s" BLUE " ║ " RESET, "- Trong -");
+                printf(CYAN "%-14s" BLUE " ║\n" RESET, "-");
             }
         }
     }
-    printf(BLUE "╚════════════╩════════════╩════════════╩════════════════╩══════════════╩══════════════╩══════════════════════════════╝\n" RESET);
+    printf(BLUE "╚════════════╩════════════╩════════════╩════════════════╩══════════════╩══════════════╩══════════════════════════════╩════════════════╝\n" RESET);
 }
