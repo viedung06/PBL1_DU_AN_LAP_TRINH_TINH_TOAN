@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <windows.h>
+#include <time.h>
 #include "include/hotel_types.h"
 #include "include/linked_list.h"
 #include "include/hotel_service.h"
@@ -15,10 +16,11 @@ char rooms[MAX_FLOORS][MAX_ROOMS_PER_FLOOR][MAX_ROOM_NAME_LEN];
 
 int main() {
     SetConsoleOutputCP(65001);
+    srand(time(NULL));
     DrawTable();
     List L;
     init(&L); // LUÔN KHỞI TẠO NGAY ĐẦU TIÊN
-    date data;
+    date data = {0};
     int chinh, phu, choice;
     char filename[100];
     drawCustomDiagramMenu();
@@ -159,7 +161,7 @@ int main() {
                             printf(INDENT BOLD_WHITE "Nhap ten file de xuat thong tin:" RESET);
                             read_line(filename, sizeof(filename));
                             print_file(&L, filename);
-                            printf(INDENT BOLD_WHITE "Da in tat ca hoa don ra file:  " GREEN "%s\n" RESET, filename);
+                            printf(INDENT BOLD_WHITE "Da in hoa don cua khach hang ra file:  " GREEN "%s\n" RESET, filename);
                             printf(BOLD_WHITE INDENT "An phim bat ky de tiep tuc..." RESET);
                             getchar();
                             break;

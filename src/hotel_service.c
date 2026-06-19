@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <time.h>
 #include "hotel_service.h"
 #include "ui.h"
 
@@ -37,8 +38,37 @@ void read_line(char *buf, int size) {
     else clear_input_buffer();
 }
 
+void generate_invoice_code(char *code, int date_in) {
+    time_t now = time(NULL);
+    struct tm *t = localtime(&now);
+    snprintf(code, 11, "%02d%02d%02d%04d",
+             t->tm_year % 100,
+             t->tm_mon + 1,
+             date_in,
+             rand() % 9000 + 1000);
+}
+
+int get_max_days_current_month() {
+    time_t now = time(NULL);
+    struct tm *t = localtime(&now);
+    int year = t->tm_year + 1900;
+    int month = t->tm_mon + 1;
+
+    switch (month) {
+        case 2:
+            return ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) ? 29 : 28;
+        case 4:
+        case 6:
+        case 9:
+        case 11:
+            return 30;
+        default:
+            return 31;
+    }
+}
+
 int get_days(int in, int out){ 
-    if(in == 31) return 1; 
+    if(in == out) return 1; 
     return (out - in); 
 }
 char get_room(char *room_number){ return room_number[0]; }
@@ -156,16 +186,21 @@ void input_data(List *L, date *d, int choice) {
     int booking_done = 0; // Cờ hiệu để kiểm tra toàn bộ quá trình nhập đã thành công chưa
 
     while (!booking_done) {
+        int max_days = get_max_days_current_month();
+        char prompt_in[80], prompt_out[80];
+        sprintf(prompt_in, INDENT"Nhap ngay vao (nam trong khoang 1-%d): ", max_days);
+        sprintf(prompt_out, "                                  Nhap ngay ra (nam trong khoang %d-%d): ", 1, max_days);
+
         do {
-            d->date_in = get_safe_int(INDENT"Nhap ngay vao (nam trong khoang 1-31): ", 1, 31);
-            if(d->date_in <31){
-                printf("                                  Nhap ngay ra (nam trong khoang %d-31): ", d->date_in + 1);
-            }else{
-                printf(INDENT BOLD_WHITE"Ngay vao la 31 nen tu dong lay ngay ra la 31, tien phong lay gia 1 ngay"RESET);
-                d->date_out = 31;
+            d->date_in = get_safe_int(prompt_in, 1, max_days);
+            if (d->date_in < max_days) {
+                sprintf(prompt_out, "                                  Nhap ngay ra (nam trong khoang %d-%d): ", d->date_in + 1, max_days);
+                d->date_out = get_safe_int(prompt_out, d->date_in + 1, max_days);
+            } else {
+                printf(INDENT BOLD_WHITE"Ngay vao la %d nen tu dong lay ngay ra la %d, tien phong lay gia 1 ngay"RESET, max_days, max_days);
+                d->date_out = max_days;
                 break;
             }
-            d->date_out = get_safe_int("", d->date_in + 1, 31);
             if (get_days(d->date_in, d->date_out) <= 0) {
                 printf(INDENT "Ngay ra phai sau ngay vao. Vui long nhap lai.\n");
             } else {
@@ -204,34 +239,10 @@ void input_data(List *L, date *d, int choice) {
         }
     }
 
-    do{ // Nhập mã hóa đơn, kiểm tra hóa đơn đã có trong danh sách hay chưa, có phải là số và đủ 8 ký tự hay chưa
-        printf(INDENT "Nhap ma hoa don: ");
-        read_line(d->invoice_code, sizeof(d->invoice_code));
-        int invoice_len = strlen(d->invoice_code);
-        if (invoice_len != 8) {
-            printf(INDENT RED"Ma hoa don phai gom 8 ky tu. Vui long nhap lai.\n" RESET);
-            continue;
-        }
-
-        int valid_invoice = 1;
-        for (int i = 0; i < invoice_len; i++) {
-            if (!isdigit((unsigned char)(d->invoice_code[i]))) {
-                printf(INDENT RED "Ma hoa don phai gom 8 chu so. Vui long nhap lai.\n" RESET);
-                valid_invoice = 0;
-                break;
-            }
-        }
-        if (!valid_invoice) {
-            continue;
-        }
-
-        if (!check_invoiceCode_exist(L, d->invoice_code)) {
-            printf(INDENT RED "Ma hoa don da ton tai. Vui long nhap lai.\n" RESET);
-            continue;
-        }else {
-            break;
-        }
-    } while (1);
+    do {
+        generate_invoice_code(d->invoice_code, d->date_in);
+    } while (!check_invoiceCode_exist(L, d->invoice_code));
+    printf(GREEN INDENT "Da cap ma hoa don tu dong: %s\n" RESET, d->invoice_code);
     int valid = 1; int flag_gender = 0;
     while (valid) {
         // Nhập tên khách hàng, kiểm tra không được để trống
@@ -507,27 +518,54 @@ static void split_list(Node *source, Node **frontRef, Node **backRef) {
 }
 
 static Node *merge_date_in_desc(Node *a, Node *b) {
-    Node *result = NULL;
-    if (a == NULL) return b;
-    if (b == NULL) return a;
-    if (a->data.date_in >= b->data.date_in) {
-        result = a; result->next = merge_date_in_desc(a->next, b);
-    } else {
-        result = b; result->next = merge_date_in_desc(a, b->next);
+    Node dummy; // Sử dụng Dummy Node để tránh phải rẽ nhánh (if-else) cho phần tử đầu tiên
+    Node *tail = &dummy;
+    dummy.next = NULL;
+
+    // Trộn 2 danh sách cho đến khi 1 trong 2 bị rỗng
+    while (a != NULL && b != NULL) {
+        if (a->data.date_in >= b->data.date_in) {
+            tail->next = a;
+            a = a->next;
+        } else {
+            tail->next = b;
+            b = b->next;
+        }
+        tail = tail->next; // Tiến tail về phía trước
     }
-    return result;
+
+    // Nối phần còn dư của danh sách a (nếu có)
+    if (a != NULL) {
+        tail->next = a;
+    }
+    // Nối phần còn dư của danh sách b (nếu có)
+    if (b != NULL) {
+        tail->next = b;
+    }
+
+    return dummy.next; // Bỏ qua node giả, trả về node thật đầu tiên
 }
 
 static Node *merge_price_desc(Node *a, Node *b) {
-    Node *result = NULL;
-    if (a == NULL) return b;
-    if (b == NULL) return a;
-    if (a->data.tien_phong >= b->data.tien_phong) {
-        result = a; result->next = merge_price_desc(a->next, b);
-    } else {
-        result = b; result->next = merge_price_desc(a, b->next);
+    Node dummy; 
+    Node *tail = &dummy;
+    dummy.next = NULL;
+
+    while (a != NULL && b != NULL) {
+        if (a->data.tien_phong >= b->data.tien_phong) {
+            tail->next = a;
+            a = a->next;
+        } else {
+            tail->next = b;
+            b = b->next;
+        }
+        tail = tail->next;
     }
-    return result;
+
+    if (a != NULL) tail->next = a;
+    if (b != NULL) tail->next = b;
+
+    return dummy.next;
 }
 
 static void merge_sort_by_date_in(Node **headRef) {
@@ -574,15 +612,15 @@ void change_customer_info(List *L, int choice) {
         printf(INDENT BOLD_WHITE "Nhap ma hoa don cua khach hang can thay doi thong tin: " RESET);
         read_line(invoice_code, sizeof(invoice_code));
         int invoice_len = strlen(invoice_code);
-        if (invoice_len != 8) {
-            printf(INDENT RED "Ma hoa don phai gom 8 ky tu. Vui long nhap lai.\n" RESET);
+        if (invoice_len != 10) {
+            printf(INDENT RED "Ma hoa don phai gom 10 ky tu. Vui long nhap lai.\n" RESET);
             continue;
         }
         int valid = 1;
         for (int i = 0; i < invoice_len; i++) {
             if (!isdigit((unsigned char)invoice_code[i])) { valid = 0; break; }
         }
-        if (!valid) { printf(INDENT RED "Ma hoa don phai gom 8 chu so. Vui long nhap lai.\n" RESET); continue; }
+        if (!valid) { printf(INDENT RED "Ma hoa don phai gom 10 chu so. Vui long nhap lai.\n" RESET); continue; }
         break;
     }
 

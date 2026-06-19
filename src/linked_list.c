@@ -68,6 +68,7 @@ void delete_tail(List *L) {
         Node *p = L->head;
         if (p->next == NULL) {
             free(p);
+            p = NULL;
             L->head = NULL;
             L->tail = NULL;
         } else {
@@ -106,6 +107,7 @@ void delete_k_place(List *L, int k) {
                 p->next = temp->next;
                 if (temp == L->tail) L->tail = p;
                 free(temp);
+                temp = NULL;
             }
         }
     }
@@ -130,11 +132,13 @@ void add_k_place(List *L, date data, int k) {
 
 // Input: Con trỏ List L | Output: Toàn bộ danh sách bị xóa, tránh rò rỉ RAM
 void clear_list(List *L) { 
+    if (L == NULL || L->head == NULL) return; //Danh sach rong, khong can giai phong 
     Node *current = L->head;
     while (current != NULL) {
         Node *temp = current;
         current = current->next;
         free(temp);
+        temp = NULL;
     }
     L->head = NULL;
     L->tail = NULL;

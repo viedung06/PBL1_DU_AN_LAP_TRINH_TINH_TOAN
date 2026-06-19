@@ -19,7 +19,7 @@ extern char rooms[MAX_FLOORS][MAX_ROOMS_PER_FLOOR][MAX_ROOM_NAME_LEN];
 typedef struct {
     char name[50];
     char identity_card[15];
-    char gender[10];
+    char gender[4];
 } info;
 
 typedef struct {
@@ -28,7 +28,7 @@ typedef struct {
     long long gia_phong;
     long long tien_phong; 
     char room_type[20];
-    char invoice_code[10];
+    char invoice_code[11];
     info customer_info;
 } date;
 
