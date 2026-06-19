@@ -30,7 +30,7 @@ void searchRoom(List *L, char *room, int choice);
 void sort_by_date_in(List *L);
 void sort_by_price(List *L);
 
-void input_data(List *L, date *d, int choice);
+int input_data(List *L, date *d, int choice);
 void delete_more_customer(List *L);
 void popMinh(List *L);
 void change_customer_info(List *L, int choice);

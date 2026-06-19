@@ -54,8 +54,9 @@ int main() {
                     phu = get_safe_int(" ", 0, 5);
                     switch(phu) {
                         case 1:
-                            input_data(&L, &data, choice);
-                            add_tail(&L, data);
+                            if (input_data(&L, &data, choice) == 1) {
+                                add_tail(&L, data);
+                            }
                             printf(INDENT BOLD_WHITE "An phim bat ky de tiep tuc..." RESET);
                             getchar();
                             break;
@@ -66,8 +67,9 @@ int main() {
                                 printf( BOLD_WHITE INDENT"Nhap vi tri can them (0 de quay lai, %d de them vao cuoi danh sach): " RESET, b+1);
                                 int k = get_safe_int(BOLD_WHITE "" RESET, 0, b+1);
                                 if(k == 0) break;
-                                input_data(&L, &data, choice);
-                                add_k_place(&L, data, k);
+                                if (input_data(&L, &data, choice) == 1) {
+                                    add_k_place(&L, data, k);
+                                }
                                 printf(INDENT BOLD_WHITE "An phim bat ky de tiep tuc..." RESET);
                                 getchar();
                             }

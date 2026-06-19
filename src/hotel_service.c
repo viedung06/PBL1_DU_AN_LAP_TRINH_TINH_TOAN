@@ -181,21 +181,28 @@ Node* check_identity_with_different_name_node(List *L, char *CMT, char *name){
     return NULL; 
 }
 
-void input_data(List *L, date *d, int choice) {
-    // clear_input_buffer(); tạm thời để như này để test xem nhập liệu có lỗi không, nếu không thì xóa dòng này
-    int booking_done = 0; // Cờ hiệu để kiểm tra toàn bộ quá trình nhập đã thành công chưa
+int input_data(List *L, date *d, int choice) {
+    int booking_done = 0;
 
     while (!booking_done) {
         int max_days = get_max_days_current_month();
-        char prompt_in[80], prompt_out[80];
-        sprintf(prompt_in, INDENT"Nhap ngay vao (nam trong khoang 1-%d): ", max_days);
-        sprintf(prompt_out, "                                  Nhap ngay ra (nam trong khoang %d-%d): ", 1, max_days);
+        char prompt_in[120], prompt_out[120];
+        sprintf(prompt_in, INDENT"Nhap ngay vao (0 de huy, 1-%d): ", max_days);
+        sprintf(prompt_out, "                                  Nhap ngay ra (0 de huy, %d-%d): ", 1, max_days);
 
         do {
-            d->date_in = get_safe_int(prompt_in, 1, max_days);
+            d->date_in = get_safe_int(prompt_in, 0, max_days);
+            if (d->date_in == 0) {
+                printf(INDENT YELLOW "Da huy thao tac nhap lieu!\n" RESET);
+                return 0;
+            }
             if (d->date_in < max_days) {
-                sprintf(prompt_out, "                                  Nhap ngay ra (nam trong khoang %d-%d): ", d->date_in + 1, max_days);
-                d->date_out = get_safe_int(prompt_out, d->date_in + 1, max_days);
+                sprintf(prompt_out, "                                  Nhap ngay ra (0 de huy, %d-%d): ", d->date_in + 1, max_days);
+                d->date_out = get_safe_int(prompt_out, 0, max_days);
+                if (d->date_out == 0) {
+                    printf(INDENT YELLOW "Da huy thao tac nhap lieu!\n" RESET);
+                    return 0;
+                }
             } else {
                 printf(INDENT BOLD_WHITE"Ngay vao la %d nen tu dong lay ngay ra la %d, tien phong lay gia 1 ngay"RESET, max_days, max_days);
                 d->date_out = max_days;
@@ -207,35 +214,36 @@ void input_data(List *L, date *d, int choice) {
                 break;
             }
         } while (1);
-        
+
         while (1) {
-            printf(INDENT "Nhap loai phong: ");
+            printf(INDENT "Nhap loai phong (0 de huy): ");
             read_line(d->room_type, sizeof(d->room_type));
+            if (strcmp(d->room_type, "0") == 0) {
+                printf(INDENT YELLOW "Da huy thao tac nhap lieu!\n" RESET);
+                return 0;
+            }
 
             int room_exists = check_room_exist(L, d->room_type, choice);
-
-                if (!room_exists) {
+            if (!room_exists) {
                 printf(INDENT RED "Phong khong ton tai. Vui long nhap lai.\n" RESET);
-                continue; 
+                continue;
             }
 
             int room_available = check_room_conflict(L, d->room_type, d->date_in, d->date_out, choice);
-
             if (!room_available) {
                 printf(INDENT RED "Phong da co khach dat trong thoi gian nay.\n" RESET);
                 printf(INDENT "1. Nhap lai ngay vao va ngay ra\n");
                 printf(INDENT "2. Nhap lai loai phong\n");
-                int choice = get_safe_int(INDENT"Lua chon cua ban (1 hoac 2): ", 1, 2);
-
-                if (choice == 1) {
+                int sub_choice = get_safe_int(INDENT"Lua chon cua ban (1 hoac 2): ", 1, 2);
+                if (sub_choice == 1) {
                     break;
                 } else {
-                    continue; 
+                    continue;
                 }
             }
 
-            booking_done = 1; 
-            break; 
+            booking_done = 1;
+            break;
         }
     }
 
@@ -243,98 +251,96 @@ void input_data(List *L, date *d, int choice) {
         generate_invoice_code(d->invoice_code, d->date_in);
     } while (!check_invoiceCode_exist(L, d->invoice_code));
     printf(GREEN INDENT "Da cap ma hoa don tu dong: %s\n" RESET, d->invoice_code);
-    int valid = 1; int flag_gender = 0;
-    while (valid) {
-        // Nhập tên khách hàng, kiểm tra không được để trống
-        while (1) {
-            printf(INDENT "Nhap ten khach hang: ");
-            read_line(d->customer_info.name, sizeof(d->customer_info.name));
-            if(!check_name(d->customer_info.name)) {
-                printf(INDENT RED "Ten khach hang chi duoc chua chu cai va khoang trang. Vui long nhap lai.\n" RESET);
-                continue;
-            }
-            if (strlen(d->customer_info.name) == 0) {
-                printf(INDENT RED "Ten khach hang khong duoc de trong. Vui long nhap lai.\n" RESET);
-                continue;
-            } else {
-                valid = 0;
-                break; // Tên hợp lệ, thoát vòng lặp
-            }
+
+    int flag_gender = 0;
+
+    while (1) {
+        printf(INDENT "Nhap ten khach hang (0 de huy): ");
+        read_line(d->customer_info.name, sizeof(d->customer_info.name));
+        if (strcmp(d->customer_info.name, "0") == 0) {
+            printf(INDENT YELLOW "Da huy thao tac nhap lieu!\n" RESET);
+            return 0;
         }
-    
-        // Nhập CCCD và kiểm tra
-        while (1) {
-            printf(INDENT "Nhap so CMT/CCCD: ");
-            read_line(d->customer_info.identity_card, sizeof(d->customer_info.identity_card));
-            int identity_length = strlen(d->customer_info.identity_card);
-            
-            // Kiểm tra độ dài
-            if (identity_length != 12) {
-                printf(INDENT RED "CCCD phai gom dung 12 chu so. Vui long nhap lai\n" RESET);
-                continue; // Quay lại nhập CCCD
-            }
-            
-            // Kiểm tra tất cả ký tự là chữ số
-            int all_digits = 1;
-            for (int i = 0; i < identity_length; i++) {
-                if (!isdigit((unsigned char)(d->customer_info.identity_card[i]))) {
-                    printf(INDENT RED "CCCD phai gom 12 chu so. Vui long nhap lai\n" RESET);
-                    all_digits = 0;
-                    break;
-                }
-            }
-            
-            if (!all_digits) {
-                continue; // Quay lại nhập CCCD
-            }
-            
-            // Kiểm tra CCCD đã tồn tại với tên khác
-            Node *check_node = check_identity_with_different_name_node(L, d->customer_info.identity_card, d->customer_info.name);
-            if(check_identity_with_different_name(L, d->customer_info.identity_card, d->customer_info.name)) {
-                printf(INDENT RED "Da co khach hang su dung CCCD nay voi ten: " BOLD_WHITE "%s\n" RESET, check_node->data.customer_info.name);
-                printf(INDENT "1. Ghi ten khach hang la:  %s\n", check_node->data.customer_info.name);
-                printf(INDENT "2. Nhap lai so CMT/CCCD\n");
-                int chon = get_safe_int(INDENT"Lua chon cua ban (1 hoac 2): ", 1, 2);
-                if (chon == 1) {
-                    strcpy(d->customer_info.name, check_node->data.customer_info.name);
-                    strcpy(d->customer_info.gender, check_node->data.customer_info.gender);
-                    flag_gender = 1;
-                    valid = 0;
-                    break; // Thoát vòng lặp CCCD để nhập lại tên
-                } else {
-                    continue; // Quay lại nhập CCCD
-                }
-            } else {
-                // CCCD hợp lệ
-                valid = 0;
+        if (!check_name(d->customer_info.name)) {
+            printf(INDENT RED "Ten khach hang chi duoc chua chu cai va khoang trang. Vui long nhap lai.\n" RESET);
+            continue;
+        }
+        if (strlen(d->customer_info.name) == 0) {
+            printf(INDENT RED "Ten khach hang khong duoc de trong. Vui long nhap lai.\n" RESET);
+            continue;
+        }
+        break;
+    }
+
+    while (1) {
+        printf(INDENT "Nhap so CMT/CCCD (0 de huy): ");
+        read_line(d->customer_info.identity_card, sizeof(d->customer_info.identity_card));
+        if (strcmp(d->customer_info.identity_card, "0") == 0) {
+            printf(INDENT YELLOW "Da huy thao tac nhap lieu!\n" RESET);
+            return 0;
+        }
+        int identity_length = strlen(d->customer_info.identity_card);
+
+        if (identity_length != 12) {
+            printf(INDENT RED "CCCD phai gom dung 12 chu so. Vui long nhap lai\n" RESET);
+            continue;
+        }
+
+        int all_digits = 1;
+        for (int i = 0; i < identity_length; i++) {
+            if (!isdigit((unsigned char)(d->customer_info.identity_card[i]))) {
+                printf(INDENT RED "CCCD phai gom 12 chu so. Vui long nhap lai\n" RESET);
+                all_digits = 0;
                 break;
             }
         }
+
+        if (!all_digits) {
+            continue;
+        }
+
+        Node *check_node = check_identity_with_different_name_node(L, d->customer_info.identity_card, d->customer_info.name);
+        if (check_identity_with_different_name(L, d->customer_info.identity_card, d->customer_info.name)) {
+            printf(INDENT RED "Da co khach hang su dung CCCD nay voi ten: " BOLD_WHITE "%s\n" RESET, check_node->data.customer_info.name);
+            printf(INDENT "1. Ghi ten khach hang la:  %s\n", check_node->data.customer_info.name);
+            printf(INDENT "2. Nhap lai so CMT/CCCD\n");
+            int chon = get_safe_int(INDENT"Lua chon cua ban (1 hoac 2): ", 1, 2);
+            if (chon == 1) {
+                strcpy(d->customer_info.name, check_node->data.customer_info.name);
+                strcpy(d->customer_info.gender, check_node->data.customer_info.gender);
+                flag_gender = 1;
+                break;
+            } else {
+                continue;
+            }
+        } else {
+            break;
+        }
     }
 
-    do { // Cho phép người dùng chọn giới tính
-        if(flag_gender) {
-            break; // Nếu đã lấy được giới tính từ CCCD trước đó, không cần nhập lại
+    do {
+        if (flag_gender) {
+            break;
         }
-        int choice;
+        int choice_gender;
         printf(INDENT "Chon gioi tinh:\n");
         printf(INDENT "1. Nam\n");
         printf(INDENT "2. Nu\n");
-        choice = get_safe_int(INDENT"Nhap lua chon: ", 1, 2);
-        if (choice == 1) {
+        choice_gender = get_safe_int(INDENT"Nhap lua chon: ", 1, 2);
+        if (choice_gender == 1) {
             strcpy(d->customer_info.gender, "Nam");
             break;
-        } else if (choice == 2) {
+        } else if (choice_gender == 2) {
             strcpy(d->customer_info.gender, "Nu");
             break;
         }
     } while (1);
-    
-    //tinh tien phong
+
     char type = get_room(d->room_type);
     d->gia_phong = get_price(type);
     int days = get_days(d->date_in, d->date_out);
     d->tien_phong = d->gia_phong * days;
+    return 1;
 }
 
 void searchCMT(List *L, char *CMT){
@@ -653,10 +659,14 @@ void change_customer_info(List *L, int choice) {
             printf(BLUE INDENT"╚═════════════════╩════════════════════════════════════════════════════╝\n" RESET);
             printf("\n");
 
+    date old_data = p->data;
     delete_k_place(L, pos);
 
     date newd;
     printf(INDENT BOLD_WHITE "Nhap thong tin khach hang moi:\n" RESET);
-    input_data(L, &newd, choice);
-    add_k_place(L, newd, pos);
+    if (input_data(L, &newd, choice) == 1) {
+        add_k_place(L, newd, pos);
+    } else {
+        add_k_place(L, old_data, pos);
+    }
 }
