@@ -173,7 +173,7 @@ int main() {
                             getchar();
                             break;
                         case 3: {
-                            int ngay = get_safe_int(INDENT"Nhap ngay can thong ke (1-31): ", 1, 31);
+                            int ngay = get_safe_int(INDENT"Nhap ngay can thong ke : ", 1, get_max_days_current_month());
                             thongke_theo_ngay(&L, ngay);
                             printf(BOLD_WHITE INDENT"An phim bat ky de tiep tuc..." RESET);
                             getchar();
@@ -226,4 +226,4 @@ int main() {
     
     return 0;
 }
-// in thêm ngày ra, so ngay o
+// sua thong ke theo ngay, thong ke max = so ngay thuc te trong thang hien tai

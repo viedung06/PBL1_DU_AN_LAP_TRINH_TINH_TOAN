@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include "linked_list.h"
 #include "ui.h"
-#include "logger.h"
 
 // Input: Con trỏ List L | Output: Danh sách được cấp phát head, tail = NULL
 void init(List *L) { 

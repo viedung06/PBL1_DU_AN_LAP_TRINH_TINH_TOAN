@@ -99,7 +99,9 @@ void normalize_room_code(char *room) {
         *end = '\0'; 
         end--; 
     }
+    // kéo phần chữ bị dịch về đầu room
     if (start != room) memmove(room, start, strlen(start) + 1); 
+    // Chuyển toàn bộ thành chữ in hoa
     for (char *p = room; *p != '\0'; p++) *p = toupper((unsigned char)*p);
 }
 

@@ -1,0 +1,139 @@
+01
+05
+A101
+Nguyen Van An
+123456789012
+Nam
+
+12
+18
+B203
+Tran Thi Mai
+987654321098
+Nu
+
+25
+30
+C315
+Le Minh Quan
+456789123456
+Nam
+
+03
+10
+D105
+Pham Ngoc Linh
+789123456789
+Nu
+
+15
+20
+A222
+Vo Thanh Tung
+321654987123
+Nam
+
+01
+31
+B101
+Nguyen Thi Hoa
+123123123123
+Nu
+
+08
+12
+C204
+Dang Gia Bao
+111222333444
+Nam
+
+20
+28
+A305
+Hoang Anh Thu
+999888777666
+Nu
+
+05
+15
+B402
+Le Quoc Khanh
+12345678901
+Nam
+
+10
+20
+A10
+Nguyen Van Loi
+123456789012
+Nam
+
+18
+12
+C301
+Tran Minh Duc
+456123789456
+Nam
+
+32
+35
+B205
+Pham Thi Lan
+789456123789
+Nu
+
+07
+14
+AA12
+Le Thanh Son
+111111111111
+Nam
+
+09
+16
+D208
+Nguyen Thi Huong
+12345A789012
+Nu
+
+11
+19
+A110
+Tran
+123456789012
+Nam
+
+13
+21
+B305
+Chrollo Lucifer
+1234567890123
+Nam
+
+04
+09
+C101
+Miu Le
+000000000000
+Khac
+
+22
+29
+A404
+Ngo Dang Gia Bao
+222333444555
+Nam
+
+17
+25
+B123
+An Thuyen
+333444555666
+Nu
+
+01
+30
+C311
+Le Thanh Mai
+042206012900
+Nu

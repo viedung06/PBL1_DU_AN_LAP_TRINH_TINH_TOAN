@@ -33,7 +33,7 @@ void menu_chinh() {
     printf("                                  ║  " BOLD_WHITE "2. Tim kiem va tra cuu khach hang" RESET BLUE "             ║\n");
     printf("                                  ║  " BOLD_WHITE "3. Sap xep hoa don" RESET BLUE "                            ║\n");
     printf("                                  ║  " BOLD_WHITE "4. Thong ke va in du lieu" RESET BLUE "                     ║\n");
-    printf("                                  ║  " BOLD_WHITE "5. Chuc nang de rieng" RESET BLUE "                         ║\n");
+    printf("                                  ║  " BOLD_WHITE "5. Chuc nang khac    " RESET BLUE "                         ║\n");
     printf("                                  ║  " BOLD_WHITE "6. Sua thong tin hoa don" RESET BLUE "                      ║\n");
     printf("                                  ║  " BOLD_WHITE "0. Thoat" RESET BLUE "                                      ║\n");
 

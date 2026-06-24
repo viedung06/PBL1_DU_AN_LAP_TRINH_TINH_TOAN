@@ -12,11 +12,27 @@ int read_hotel_layout(const char *filename, int *floor_count, int room_counts[],
         printf(INDENT RED "Khong mo duoc file!\n" RESET);
         return 0;
     }
-    if (fscanf(f, "%d", floor_count) != 1) { fclose(f); return 0; }
-    if (*floor_count <= 0 || *floor_count > MAX_FLOORS) { fclose(f); return 0; }
+    if (fscanf(f, "%d", floor_count) != 1) { 
+        printf(INDENT RED "Loi doc file! \n" RESET);
+        fclose(f); 
+        return 0; 
+    }
+    if (*floor_count <= 0 || *floor_count > MAX_FLOORS) { 
+        printf(INDENT RED "Loi doc file! So tang khong hop le!\n" RESET);
+        fclose(f); 
+        return 0; 
+    }
     for (int i = 0; i < *floor_count; i++) {
-        if (fscanf(f, "%d", &room_counts[i]) != 1) { fclose(f); return 0; }
-        if (room_counts[i] <= 0 || room_counts[i] > MAX_ROOMS_PER_FLOOR) { fclose(f); return 0; }
+        if (fscanf(f, "%d", &room_counts[i]) != 1) { 
+            printf(INDENT RED "Loi doc file! \n" RESET);
+            fclose(f); 
+            return 0; 
+        }
+        if (room_counts[i] <= 0 || room_counts[i] > MAX_ROOMS_PER_FLOOR) { 
+            printf(INDENT RED "Loi doc file! So phong tren tang %d khong hop le!\n" RESET, i + 1);
+            fclose(f); 
+            return 0; 
+        }
         for (int j = 0; j < room_counts[i]; j++) {
             if (fscanf(f, "%29s", rooms[i][j]) != 1) { fclose(f); return 0; }
         }
@@ -31,7 +47,7 @@ void read_file(List *L, int choice, const char *filename) {
     date d;
     while (fscanf(f, "%d", &d.date_in) == 1) {
         if (fscanf(f, "%d", &d.date_out) != 1) break;
-        char temp_str[100];
+        char temp_str[500];
         if (fgets(temp_str, sizeof(temp_str), f) == NULL) break;
         
         if (fgets(d.room_type, sizeof(d.room_type), f) == NULL) break;
